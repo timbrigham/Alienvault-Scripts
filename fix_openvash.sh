@@ -5,6 +5,10 @@ echo "If this errors out at any point *stop running any later steps!*"
 
 echo "=================================================================="
 read  -n 1 -p "Continuing will reinstall openvas. Ctrl C to exit."
+
+pkill -9 openvasmd
+pkill -9 openvassd 
+
 # Remove the scanner and manager packages. 
 apt-get remove openvas-scanner
 apt-get remove openvas-manager
