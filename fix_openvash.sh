@@ -19,6 +19,16 @@ rm -rf /var/lib/openvas/*
 apt-get install openvas-scanner
 apt-get install openvas-manager
 
+echo "The scanner_address and scanner_port lines in /etc/init.d/openvas-manager are broken. Stop now and comment them out."
+echo "=================================================================="
+read  -n 1 -p "Pause here until you have edited the file above"
+
+#[ "$SCANNER_ADDRESS" ] && DAEMONOPTS="$DAEMONOPTS --scanner-host=$SCANNER_ADDRESS"
+#[ "$SCANNER_PORT" ]    && DAEMONOPTS="$DAEMONOPTS --scanner-port=$SCANNER_PORT"
+
+
+
+
 
 echo "=================================================================="
 read  -n 1 -p "Sync the latest plugins."
@@ -61,9 +71,9 @@ read  -n 1 -p "Rebuild the profiles with the updated plugin information"
 perl /usr/share/ossim/scripts/vulnmeter/updateplugins.pl update custom
 
 
-echo "=================================================================="
-read  -n 1 -p "Run an alienvault-update to pick up the changes"
-alienvault-update
+#echo "=================================================================="
+#read  -n 1 -p "Run an alienvault-update to pick up the changes"
+#alienvault-update
 
 
 
