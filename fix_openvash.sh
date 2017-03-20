@@ -9,7 +9,7 @@ read  -n 1 -p "Continuing will reinstall openvas. Ctrl C to exit."
 pkill -9 openvasmd
 pkill -9 openvassd 
 
-# Remove the scanner and manager packages. 
+# Remove the OpenVAS packages
 apt-get remove openvas-scanner
 apt-get remove openvas-manager
 apt-get remove alienvault-openvas 
@@ -44,7 +44,7 @@ openvas-nvt-sync
 echo "=================================================================="
 read  -n 1 -p "Make server and client certificates."
 # Create an OpenVAS server certificate.
-openvas-mkcert -q
+openvas-mkcert -q -f
 # Create a client certificate. 
 openvas-mkcert-client -n -i
 
@@ -53,6 +53,7 @@ read  -n 1 -p "Start Services."
 # Start the OpenVAS services.
 service openvas-manager restart
 service openvas-scanner restart
+service redis-server restart
 
 echo "=================================================================="
 read  -n 1 -p "Rebuild database."
@@ -84,6 +85,22 @@ mkdir -p /var/lib/openvas/gnupg
 #read  -n 1 -p "Run an alienvault-update to pick up the changes"
 #alienvault-update
 
+
+#/usr/bin/omp -h 127.0.0.1 -p 9390 -u ossim -w ossim -iX "<GET_NVTS/>"
+#    <get_nvts_response status="503" status_text="Service temporarily down"></get_nvts_response>
+
+/usr/bin/omp -h 127.0.0.1 -p 9390 -u ossim -w ossim -iX "<GET_NVTS details='1'/>"
+
+# The client uses the get_preferences command to get preference information. If the command sent by the client was valid, the manager will reply with a list of preferences to the client. If the manager cannot access a list of available NVTs at present, it will reply with the 503 response.
+
+#perl /usr/share/ossim/scripts/vulnmeter/updateplugins.pl update wget
+#perl /usr/share/ossim/scripts/vulnmeter/updateplugins.pl migrate
+
+
+
+
+
+
 echo "=================================================================="
 read  -n 1 -p "Run an alienvault-reconfig to pick up the changes"
 alienvault-reconfig
@@ -91,10 +108,10 @@ alienvault-reconfig
 
 
 
-echo "=================================================================="
-echo "If your scan jobs in OSSIM / Alienvault are still hanging up check "
-echo "/var/log/openvassd.messages for references to /tmp/redis.sock. if they are there "
-echo "edit the file /etc/openvas/openvassd.conf (creating it if needed)"
-echo "and add the following line. "
-echo "kb_location=/var/run/redis/redis-server-openvas.sock"
+#echo "=================================================================="
+#echo "If your scan jobs in OSSIM / Alienvault are still hanging up check "
+#echo "/var/log/openvassd.messages for references to /tmp/redis.sock. if they are there "
+#echo "edit the file /etc/openvas/openvassd.conf (creating it if needed)"
+#echo "and add the following line. "
+#echo "kb_location=/var/run/redis/redis-server-openvas.sock"
 
