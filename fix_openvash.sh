@@ -9,19 +9,19 @@ read  -n 1 -p "Continuing will reinstall openvas. Ctrl C to exit."
 pkill -9 openvasmd
 pkill -9 openvassd 
 
-apt-get remove openvas-scanner
-apt-get remove openvas-manager
-apt-get remove alienvault-openvas 
-apt-get remove alienvault-openvas8-feed
-apt-get remove alienvault-redis-server-openvas
+apt-get -y remove openvas-scanner
+apt-get -y remove openvas-manager
+apt-get -y remove alienvault-openvas 
+apt-get -y remove alienvault-openvas8-feed
+apt-get -y remove alienvault-redis-server-openvas
 # Wipe out any leftover configuration. This notably includes tasks.db
 rm -rf /var/lib/openvas/*
 
-apt-get install openvas-scanner
-apt-get install openvas-manager
-apt-get install alienvault-openvas 
-apt-get install alienvault-openvas8-feed
-apt-get install alienvault-redis-server-openvas
+apt-get -y install openvas-scanner
+apt-get -y install openvas-manager
+apt-get -y install alienvault-openvas 
+apt-get -y install alienvault-openvas8-feed
+apt-get -y install alienvault-redis-server-openvas
 
 echo ""
 echo "=================================================================="
