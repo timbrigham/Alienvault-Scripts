@@ -8,6 +8,7 @@ read  -n 1 -p "Continuing will reinstall openvas. Ctrl C to exit."
 
 pkill -9 openvasmd
 pkill -9 openvassd 
+service monit stop
 
 apt-get -y remove openvas-scanner
 apt-get -y remove openvas-manager
@@ -80,3 +81,4 @@ echo "Run an alienvault-reconfig to pick up the changes"
 read  -n 1 -p "Continue"
 alienvault-reconfig
 
+service monit start
