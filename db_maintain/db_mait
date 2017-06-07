@@ -1,0 +1,40 @@
+
+MYSQL_USER="<set your user here>"
+MYSQL_PASS="<set your password here>"
+THRESHOLD_ROWS=5000000
+ROWS_PER_RUN=5000000
+
+
+function prune {
+	TARGET_DB=$1
+	TARGET_TABLE=$2
+	TARGET_COL_ORDER=$3
+
+	echo "Getting row count from table $TARGET_DB.$TARGET_TABLE"
+	numrows=`mysql -u $MYSQL_USER --password=$MYSQL_PASS -e "select count($TARGET_COL_ORDER) from $TARGET_DB.$TARGET_TABLE" | grep -v count | grep -v "-"`
+	echo "Got $numrows rows from table $TARGET_DB.$TARGET_TABLE"
+
+	if [ $numrows -gt $THRESHOLD_ROWS ]
+	then
+        let "rowstodelete = $numrows - $THRESHOLD_ROWS"
+        if [ $rowstodelete -gt $ROWS_PER_RUN ]
+        then
+                echo "Deleting $ROWS_PER_RUN from table $TARGET_DB.$TARGET_TABLE"
+                result=`mysql -u $MYSQL_USER --password=$MYSQL_PASS -e "delete from $TARGET_DB.$TARGET_TABLE order by $TARGET_COL_ORDER ASC LIMIT $ROWS_PER_RUN"`
+        else
+                echo "Deleting  $rowstodelete from table $TARGET_DB.$TARGET_TABLE"
+                result=`mysql -u $MYSQL_USER --password=$MYSQL_PASS -e "delete from $TARGET_DB.$TARGET_TABLE order by $TARGET_COL_ORDER ASC LIMIT $rowstodelete"`
+        fi
+        echo "Result=$result (blank is good)"
+	else
+        echo "Number of rows = $numrows which not more than $THRESHOLD_ROWS so nothing to do."
+	fi
+}
+
+prune "alienvault_siem" "idm_data" "hex(event_id)"
+prune "alienvault" "extra_data" "event_id"
+prune "alienvault_siem" "extra_data" "event_id"
+prune "alienvault" "host_qualification" "hex(host_id)"
+prune "alienvault_siem" "acid_event" "timestamp"
+
+
